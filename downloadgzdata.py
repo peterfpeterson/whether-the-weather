@@ -15,7 +15,13 @@ STATION = 'GHCND:USW00013891' #'KTYS' valid for 1948 through 2017
 USAF=723260
 WBAN=13891
 
+BAD_YEAR = [1965,1966,1967,1968,1969,1970,1971,1972]
+
 for year in range(1948,2018):
+    if year in BAD_YEAR:
+        print('skipping', year)
+        continue
+
     filename = FILE_TEMPLATE.format(USAF=USAF, WBAN=WBAN, year=year)
     target_file = os.path.join(data_dir, filename)
     # keep going if the file exists
