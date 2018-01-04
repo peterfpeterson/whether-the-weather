@@ -50,10 +50,13 @@ for year in range(1948,2018):
 
 ########## extract the data into a panda DataFrame
 def convertvalue(value, scale, missing_value):
-    if value == missing_value:
+    try:
+        if int(value) == missing_value:
+            return np.nan
+        else:
+            return float(value) / scale
+    except ValueError:
         return np.nan
-    else:
-        return value / scale
 
 def extract_date_time(row):
     '''
@@ -174,14 +177,31 @@ def extract_precipitation(row):
       precipitation amounts excluded from the 24-hour total
       9: Missing
     '''
+    def convertValue(stuff=''):
+        if len(stuff) == 0:
+            return float(np.nan) # 0 hours, 0 cm
+        else:
+            hours = convertvalue(stuff[:2], 1, 99)
+            millis = convertvalue(stuff[2:8], 10, 9999)
+            #return (int(stuff[:2]), int(stuff[2:8])) # hours, cm
+            return millis / hours
+
     if 'AA' not in row:
-        return False
+        return (convertValue(),) # 0 hours, 0 cm
 
     values = []
-    while 'AA' in row:
-        index = row.index('AA')
-        values.append(row[index:index+12])
-        row = row[index+11:]
+    for key in ['AA1', 'AA2', 'AA3', 'AA4']:
+        if key in row:
+            index = row.index(key)
+            value = row[index+3:index+10]
+            row = row[index+9:]
+            if value[-1] not in '19':
+                values.append(convertValue(value))
+            else:
+                values.append(np.nan)
+        else:
+            values.append(np.nan)
+
     return tuple(values)
 
 def extract_precipitation2(row):
@@ -205,6 +225,7 @@ def extract_precipitation2(row):
       DOM: A general domain comprised of the numeric characters (0-9).
       9999 = Missing
     '''
+    # didn't appear in 2017 data
     pass
 
 def extract_snow(row):
@@ -243,7 +264,7 @@ def extract_snow(row):
       SCALING FACTOR: 10
       DOM: A general domain comprised of the numeric characters (0-9).
       999999 = Missing.
-      FLD LEN: 1
+    FLD LEN: 1
       SNOW-DEPTH equivalent water condition code
       The code that denotes specific conditions associated with the measurement of the SNOW-DEPTH.
       DOM: A specific domain comprised of the characters in the ASCII character set.
@@ -251,21 +272,55 @@ def extract_snow(row):
       2: Trace
       9: Missing (no special code to report)
     '''
-    pass
+    snow_depth = np.nan
+    water_depth = np.nan
+    if 'AJ1' in row:
+        index = row.index('AJ1')
+        everything = row[index+3:index+15]
+        snow_depth, snow_cond = everything[0:4], everything[4:5]
+        water_depth, water_cond = everything[5:11], everything[11:]
+        
+        if snow_cond in '1239':
+            snow_depth = np.nan
+        else:
+            snow_depth = convertvalue(snow_depth, 1, 9999)
+        if water_cond in '1239':
+            water_depth = np.nan
+        else:
+            water_depth = convertvalue(water_depth, 10, 999999)
+    return snow_depth*10, water_depth
 
-def injest_file(fname):
+def ingest_file(fname):
     print('***', fname)
     with gzip.open(fname, 'rt', encoding='ascii') as f:
         data = [extract_date_time(ln) + extract_wind(ln) + extract_temperature(ln)
-                + extract_pressure(ln)
+                + extract_pressure(ln) + extract_precipitation(ln) + extract_snow(ln)
                 for ln in f]
-    with gzip.open(fname, 'rt', encoding='ascii') as f:
-        [print(extract_precipitation(ln)) for ln in f]
+    #with gzip.open(fname, 'rt', encoding='ascii') as f:
+    #    [print(extract_precipitation(ln)) for ln in f]
 
     cols = ('datetime', #'year', 'month', 'day', 'hour',
             'wind_angle', 'wind_speed',
-            'temperature', 'dewpoint','pressure')
-    return pd.DataFrame(data, columns=cols).dropna()
+            'temperature', 'dewpoint','pressure',
+            'precip1', 'precip2', 'precip3', 'precip4',
+            'snow', 'water_equiv')
+    return pd.DataFrame(data, columns=cols)#.dropna()
 
-data = injest_file(filenames[-1]) 
-print(data)
+# get rid of files that have issues
+print('number of files', len(filenames))
+filenames = [filename for filename in filenames
+             if ('1973.gz' not in filename) and ('1975.gz' not in filename)]
+print('number of files', len(filenames))
+
+# ingest everything and put it into a single file
+alldata = [ingest_file(filename) for filename in filenames]
+everything = pd.concat(alldata)
+del alldata
+
+# write out to file
+print('orig ', len(everything))
+everything.to_hdf('TYS.h5', 'everything', format='table')
+
+# how to load the data
+#other = pd.read_hdf('TYS.h5', 'everything')
+#print('other', len(other))
