@@ -179,11 +179,15 @@ def extract_precipitation(row):
     '''
     def convertValue(stuff=''):
         if len(stuff) == 0:
-            return float(np.nan) # 0 hours, 0 cm
+            return 0. # 0 hours, 0 cm
         else:
             hours = convertvalue(stuff[:2], 1, 99)
             millis = convertvalue(stuff[2:8], 10, 9999)
             #return (int(stuff[:2]), int(stuff[2:8])) # hours, cm
+            rate = millis * .1 / hours
+            if np.isnan(rate):
+                return 0.
+            #print(millis, hours, rate)
             return millis / hours
 
     if 'AA' not in row:
@@ -195,13 +199,14 @@ def extract_precipitation(row):
             index = row.index(key)
             value = row[index+3:index+10]
             row = row[index+9:]
-            if value[-1] not in '19':
+            #print('>>>', value)
+            if value[-1] in '2': #not in '19':
                 values.append(convertValue(value))
             else:
-                values.append(np.nan)
+                values.append(0.)
         else:
-            values.append(np.nan)
-
+            values.append(0.)
+    #print('---', values)
     return tuple(values)
 
 def extract_precipitation2(row):
@@ -312,6 +317,8 @@ filenames = [filename for filename in filenames
              if ('1973.gz' not in filename) and ('1975.gz' not in filename)]
 print('number of files', len(filenames))
 
+#alldata = ingest_file('723260-13891-2017.gz')
+#print(alldata.precip1.values[-24*4:])
 # ingest everything and put it into a single file
 alldata = [ingest_file(filename) for filename in filenames]
 everything = pd.concat(alldata)
