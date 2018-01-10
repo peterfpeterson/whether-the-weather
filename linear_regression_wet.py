@@ -48,7 +48,8 @@ for i in range(31):
 
 # create figure
 fig, ax = plt.subplots()
-ax.plot(x, rain, label='rain pred')
+ax.set_title('linear regression - 3 day window')
+ax.plot(x, rain, label='rain pred', linewidth=)
 ax.plot(x, snow, label='snow pred')
 '''
 # plot daily min and max

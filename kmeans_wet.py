@@ -27,7 +27,7 @@ labels_class = [#'wind_speed',
                 ]
 
 # run it
-decision = KMeans(n_clusters=2)
+decision = KMeans(n_clusters=3)
 decision.fit(training[labels_class],
              training[['willrain']])#,'willsnow']])
 print(decision.score(test[labels_class],

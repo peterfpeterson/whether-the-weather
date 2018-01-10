@@ -53,9 +53,10 @@ print(x.size, low.size, high.size)
 
 # create figure
 fig, ax = plt.subplots()
+ax.set_title('linear regression - 2 week window')
 
 # plot daily min and max
-ax.fill_between(x, low, high, color='grey')
+ax.fill_between(x, low, high, color='aqua')
 #ax.fill_between(minmaxtemp.index.values, minmaxtemp.temp_min, minmaxtemp.temp_max, color='grey')
 #ax.plot(minmaxtemp.index.values, minmaxtemp.temp_min, color='grey')
 #ax.plot(minmaxtemp.index.values, minmaxtemp.temp_max, color='grey')
@@ -69,7 +70,8 @@ for year in [2017]:
     alpha = .2
     if year == 2017:
         alpha = 1.
-    ax.plot((data.index.values - startdate) / np.timedelta64(1,'D'), data, label=str(year), alpha=alpha)
+    ax.plot((data.index.values - startdate) / np.timedelta64(1,'D'), data, label=str(year), alpha=alpha,
+color='indigo')
 
 # add lines for month boundaries
 daynum = 0

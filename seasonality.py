@@ -28,14 +28,15 @@ minmaxtemp = minmaxtemp.groupby(minmaxtemp.index).mean()
 
 # create figure
 fig, ax = plt.subplots()
+ax.set_title('seasonality - 12 months')
 
 # plot daily min and max
-ax.fill_between(minmaxtemp.index.values, minmaxtemp.temp_min, minmaxtemp.temp_max, color='grey')
+ax.fill_between(minmaxtemp.index.values, minmaxtemp.temp_min, minmaxtemp.temp_max, color='cyan')
 #ax.plot(minmaxtemp.index.values, minmaxtemp.temp_min, color='grey')
 #ax.plot(minmaxtemp.index.values, minmaxtemp.temp_max, color='grey')
 
 # plot hourly actuals
-for year in range(1976, 2018):
+for year in [2017]: #range(1976, 2018):
     startdate = np.datetime64('{}-01-01T00:00'.format(year))
     enddate = np.datetime64('{}-12-31T23:59'.format(year))
     #mask = (dataframe.index >= startdate) & (dataframe.index <= enddate)
@@ -43,7 +44,8 @@ for year in range(1976, 2018):
     alpha = .2
     if year == 2017:
         alpha = 1.
-    ax.plot((data.index.values - startdate) / np.timedelta64(1,'D'), data, label=str(year), alpha=alpha)
+    ax.plot((data.index.values - startdate) / np.timedelta64(1,'D'), data, label=str(year),
+            alpha=alpha, color='darkblue')
 
 # add lines for month boundaries
 daynum = 0
