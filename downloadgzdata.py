@@ -24,7 +24,7 @@ BAD_YEAR = [1965,1966,1967,1968,1969,1970,1971,1972]
 
 ########## download gz version of everything
 filenames = []
-for year in range(1948,2018):
+for year in range(1948,2019):
     if year in BAD_YEAR:
         print('skipping', year)
         continue
