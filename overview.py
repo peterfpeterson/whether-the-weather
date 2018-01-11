@@ -37,33 +37,37 @@ for i, year in enumerate(range(1948, 2018)):
     data = dataframe.loc[(dataframe.index >=startdate) & (dataframe.index<=enddate), ('water_equiv')] # celsius
     snow[i] = data.values[:365]
 
-'''
 ##### minimum temperature
 fig, ax = plt.subplots()
 ax.set_title('daily minimum temperature')
 c = ax.pcolormesh(dayofyear, years, np.ma.masked_invalid(temp_min),
+                  cmap='viridis',
                   vmin=-10,#np.nanmin(temp_min),
                   vmax=40)#np.nanmax(temp_min))
-fig.colorbar(c)
+c = fig.colorbar(c)
+c.set_label('Celsius')
 fig.show()
 
 ##### maximum temperature
 fig, ax = plt.subplots()
 ax.set_title('daily maximum temperature')
 c = ax.pcolormesh(dayofyear, years, np.ma.masked_invalid(temp_max),
+                  cmap='viridis',
                   vmin=-10,#np.nanmin(temp_max),
                   vmax=40)#np.nanmax(temp_max))
-fig.colorbar(c)
+c = fig.colorbar(c)
+c.set_label('Celsius')
 fig.show()
-'''
 
 ##### rain
 fig, ax = plt.subplots()
 ax.set_title('rain')
 c = ax.pcolormesh(dayofyear, years, np.ma.masked_invalid(rain),
+                  cmap='viridis',
                   vmin=0.,
                   vmax=10.)#np.nanmax(rain))
-fig.colorbar(c)
+c = fig.colorbar(c)
+c.set_label('centimeters')
 fig.show()
 
 '''
