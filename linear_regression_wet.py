@@ -49,8 +49,8 @@ for i in range(31):
 # create figure
 fig, ax = plt.subplots()
 ax.set_title('linear regression - 3 day window')
-ax.plot(x, rain, label='rain pred', linewidth=)
-ax.plot(x, snow, label='snow pred')
+ax.plot(x, rain, label='rain pred')
+#ax.plot(x, snow, label='snow pred')
 '''
 # plot daily min and max
 #ax.fill_between(x, low, high, color='grey')
@@ -63,7 +63,7 @@ ax.plot(dataframe.index.values, dataframe.precip1, label='precip1')
 #ax.plot(dataframe.index.values, dataframe.precip2, label='precip2')
 #ax.plot(dataframe.index.values, dataframe.precip3, label='precip3')
 #ax.plot(dataframe.index.values, dataframe.precip4, label='precip4')
-ax.plot(dataframe.index.values, dataframe.snow, label='snow')
+#ax.plot(dataframe.index.values, dataframe.snow, label='snow')
 #ax.plot(dataframe.index.values, dataframe.water_equiv, label='water')
 ax.legend()
 '''

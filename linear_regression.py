@@ -33,7 +33,7 @@ minmaxtemp = minmaxtemp.sort_index()
 def getNext(fullX, fullY, dayfromend):
     linear = linear_model.LinearRegression()
     low,high = dayfromend-14, fullX.size+dayfromend
-    print(low,high)
+    #print(low,high)
     trainX = np.asarray(fullX[low:high]).reshape(-1, 1)
     trainY = np.asarray(fullY[low:high]).reshape(-1, 1)
     linear.fit(trainX, trainY)
@@ -46,7 +46,7 @@ def getNext(fullX, fullY, dayfromend):
 ##############################
 x,low,high = (np.arange(366-32, 366), np.zeros(32), np.zeros(32))
 for i in range(31):
-    print(i, x[i])
+    #print(i, x[i])
     low[i] = getNext(minmaxtemp.index, minmaxtemp.temp_min, x[i]-365)
     high[i] = getNext(minmaxtemp.index, minmaxtemp.temp_max, x[i]-365)
 print(x.size, low.size, high.size)
