@@ -94,7 +94,7 @@ def extract_wind(row):
       NOTE: If a value of 9 appears with a wind speed of 0000, this indicates calm winds.
     POS: 66-69 WIND-OBSERVATION speed rate
       The rate of horizontal travel of air past a fixed point.
-      MIN: 0000 MAX: 0900 UNITS: 
+      MIN: 0000 MAX: 0900 UNITS:
       SCALING FACTOR: 10
       DOM: A general domain comprised of the numeric characters (0-9).
       9999 = Missing.
@@ -128,7 +128,7 @@ def extract_temperature(row):
 
 def extract_pressure(row):
     '''
-    POS: 100-104 ATMOSPHERIC-PRESSURE-OBSERVATION sea level pressure 
+    POS: 100-104 ATMOSPHERIC-PRESSURE-OBSERVATION sea level pressure
       The air pressure relative to Mean Sea Level (MSL).
       MIN: 08600 MAX: 10900 UNITS: Hectopascals
       SCALING FACTOR: 10
@@ -284,7 +284,7 @@ def extract_snow(row):
         everything = row[index+3:index+15]
         snow_depth, snow_cond = everything[0:4], everything[4:5]
         water_depth, water_cond = everything[5:11], everything[11:]
-        
+
         if snow_cond in '1239':
             snow_depth = np.nan
         else:
