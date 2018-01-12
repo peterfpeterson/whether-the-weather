@@ -48,7 +48,7 @@ print('total rows', len(actual))
 
 # create figure
 fig, ax = plt.subplots()
-ax.set_title('seasonality - 12 months')
+ax.set_title('Seasonality - 2017')
 
 # plot daily min and max
 ax.fill_between(minmaxtemp.index.values, minmaxtemp.temp_min, minmaxtemp.temp_max, color=colors[-1])#'cyan')

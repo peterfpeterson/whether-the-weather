@@ -43,7 +43,7 @@ years = years[-41:]
 ##### minimum temperature
 temp_min = temp_min[-41:,:]
 fig, ax = plt.subplots()
-ax.set_title('daily minimum temperature in C')
+ax.set_title('Daily Minimum Temperature in C')
 c = ax.pcolormesh(dayofyear, years, np.ma.masked_invalid(temp_min),
                   label='stuff',
                   cmap='viridis',
@@ -60,7 +60,7 @@ fig.show()
 ##### maximum temperature
 temp_max = temp_max[-41:,:]
 fig, ax = plt.subplots()
-ax.set_title('daily maximum temperature in C')
+ax.set_title('Daily Maximum Temperature in C')
 c = ax.pcolormesh(dayofyear, years, np.ma.masked_invalid(temp_max),
                   cmap='viridis',
                   vmin=-10,#np.nanmin(temp_max),
@@ -76,7 +76,7 @@ fig.show()
 ##### rain
 rain = rain[-41:,:]
 fig, ax = plt.subplots()
-ax.set_title('rain in cm')
+ax.set_title('Rain in cm')
 c = ax.pcolormesh(dayofyear, years, np.ma.masked_invalid(rain),
                   cmap='viridis',
                   vmin=0.,

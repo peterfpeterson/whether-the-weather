@@ -4,6 +4,19 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn import linear_model
+from month_marks import month_ticks, month_label, colors
+
+# load in all the year actuals
+print('loading TYS_daily.h5')
+actual = pd.read_hdf('TYS_daily.h5', 'everything')
+actual = actual.drop(['wind_speed', 'pressure', 'precip1', 'precip2',
+                      'precip3', 'precip4', 'snow', 'water_equiv',
+                      'dew_min', 'dew_max', 'willrain', 'willsnow', 'press_change'], 1) # 1=column
+actual = actual[(actual.index >= np.datetime64('2017-01-01')) & 
+                (actual.index <= np.datetime64('2017-12-31'))]
+actual['dayofyear'] = actual.index.dayofyear
+actual = actual.set_index('dayofyear')
+actual = actual.sort_index()
 
 # load the data
 if 'dataframe' not in globals():
@@ -53,10 +66,10 @@ print(x.size, low.size, high.size)
 
 # create figure
 fig, ax = plt.subplots()
-ax.set_title('linear regression - 2 week window')
+ax.set_title('Linear Regression - 14 Day Window')
 
 # plot daily min and max
-ax.fill_between(x, low, high, color='aqua')
+ax.fill_between(x, low, high, color=colors[9])
 #ax.fill_between(minmaxtemp.index.values, minmaxtemp.temp_min, minmaxtemp.temp_max, color='grey')
 #ax.plot(minmaxtemp.index.values, minmaxtemp.temp_min, color='grey')
 #ax.plot(minmaxtemp.index.values, minmaxtemp.temp_max, color='grey')
@@ -71,14 +84,22 @@ for year in [2017]:
     if year == 2017:
         alpha = 1.
     ax.plot((data.index.values - startdate) / np.timedelta64(1,'D'), data, label=str(year), alpha=alpha,
-color='indigo')
+            color=colors[2])
 
+'''
 # add lines for month boundaries
 daynum = 0
 for number in [0,31,28,31,30,31,30,31,31,30,31,30,31,0]:
     ax.plot((daynum,daynum), (-20,40), color='k')
     daynum += number
+'''
 
-ax.set_xlim(305,364.5)
-ax.set_ylim(-10,20)
+ax.set_xticks(month_ticks)
+ax.set_xticklabels(month_label)
+ax.set_ylabel('temperature in C')
+ax.set_xlim(304,364.5)
+ax.set_ylim(-8,26)
 fig.show()
+
+print('mean abs diff in min', np.abs(low - actual.temp_min.values[-1*low.size:]).mean())
+print('mean abs diff in max', np.abs(high - actual.temp_max.values[-1*high.size:]).mean())

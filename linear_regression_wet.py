@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn import linear_model
+from month_marks import month_ticks, month_label, colors
 
 # load the data
 if 'dataframe' not in globals():
@@ -44,12 +45,14 @@ for i in range(31):
     #print(i, x[i])
     rain[i] = getNext(dataframe.index, dataframe.precip1, x[i]-365)
     snow[i] = getNext(dataframe.index, dataframe.snow, x[i]-365)
+rain[rain < 0.] = 0.
 #print(x.size, rain.size, snow.size)
 
 # create figure
 fig, ax = plt.subplots()
-ax.set_title('linear regression - 3 day window')
-ax.plot(x, rain, label='rain pred')
+ax.set_title('Linear Regression - 3 Day Window')
+ax.plot(dataframe.index.values, dataframe.precip1, label='rain', color=colors[6])
+ax.plot(x, rain, label='prediction', color=colors[0])
 #ax.plot(x, snow, label='snow pred')
 '''
 # plot daily min and max
@@ -59,7 +62,6 @@ ax.plot(x, rain, label='rain pred')
 #ax.plot(minmaxtemp.index.values, minmaxtemp.temp_max, color='grey')
 '''
 
-ax.plot(dataframe.index.values, dataframe.precip1, label='precip1')
 #ax.plot(dataframe.index.values, dataframe.precip2, label='precip2')
 #ax.plot(dataframe.index.values, dataframe.precip3, label='precip3')
 #ax.plot(dataframe.index.values, dataframe.precip4, label='precip4')
@@ -79,12 +81,19 @@ for year in [2017]:
     ax.plot((data.index.values - startdate) / np.timedelta64(1,'D'), data, label=str(year), alpha=alpha)
 '''
 
+'''
 # add lines for month boundaries
 daynum = 0
 for number in [0,31,28,31,30,31,30,31,31,30,31,30,31,0]:
     ax.plot((daynum,daynum), (-1,18), color='k')
     daynum += number
+'''
 
-ax.set_xlim(335,364.5)
-ax.set_ylim(-1,18)
+ax.set_xticks(month_ticks)
+ax.set_xticklabels(month_label)
+ax.set_ylabel('rain in cm')
+ax.set_xlim(304,364.5)
+ax.set_ylim(-.1,10)
 fig.show()
+
+print('mean abs diff in min', np.abs(rain - dataframe.precip1.values[-1*rain.size:]).mean())
