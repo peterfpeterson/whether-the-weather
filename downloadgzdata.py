@@ -282,17 +282,22 @@ def extract_snow(row):
     if 'AJ1' in row:
         index = row.index('AJ1')
         everything = row[index+3:index+15]
-        snow_depth, snow_cond = everything[0:4], everything[4:5]
-        water_depth, water_cond = everything[5:11], everything[11:]
-
+        snow_depth, snow_cond = everything[0:5], everything[5:6]
+        water_depth, water_cond = everything[6:11], everything[11:]
+        
         if snow_cond in '1239':
             snow_depth = np.nan
         else:
             snow_depth = convertvalue(snow_depth, 1, 9999)
+            if snow_depth > float(1200):
+                snow_depth = np.nan
+
         if water_cond in '1239':
             water_depth = np.nan
         else:
             water_depth = convertvalue(water_depth, 10, 999999)
+            if water_depth > float(120000):
+                water_depth = np.nan
     return snow_depth*10, water_depth
 
 def ingest_file(fname):

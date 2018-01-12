@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn.cluster import KMeans
+from month_marks import month_ticks, month_label
 
 # load the data
 print('loading TYS_daily.h5')
@@ -30,54 +31,74 @@ for i, year in enumerate(range(1948, 2018)):
     temp_max[i] = data.values[:365]
 
     # rain
-    data = dataframe.loc[(dataframe.index >=startdate) & (dataframe.index<=enddate), ('precip4')] # celsius
+    data = dataframe.loc[(dataframe.index >=startdate) & (dataframe.index<=enddate), ('precip1')] # celsius
     rain[i] = data.values[:365]
 
     # snow
-    data = dataframe.loc[(dataframe.index >=startdate) & (dataframe.index<=enddate), ('water_equiv')] # celsius
+    data = dataframe.loc[(dataframe.index >=startdate) & (dataframe.index<=enddate), ('snow')] # celsius
     snow[i] = data.values[:365]
 
+years = years[-41:]
+
 ##### minimum temperature
+temp_min = temp_min[-41:,:]
 fig, ax = plt.subplots()
-ax.set_title('daily minimum temperature')
+ax.set_title('daily minimum temperature in C')
 c = ax.pcolormesh(dayofyear, years, np.ma.masked_invalid(temp_min),
+                  label='stuff',
                   cmap='viridis',
                   vmin=-10,#np.nanmin(temp_min),
                   vmax=40)#np.nanmax(temp_min))
+ax.set_yticks(np.arange(1980,2020,5))
+ax.set_ylabel('year')
+ax.set_xticks(month_ticks)
+ax.set_xticklabels(month_label)
 c = fig.colorbar(c)
 c.set_label('Celsius')
 fig.show()
 
 ##### maximum temperature
+temp_max = temp_max[-41:,:]
 fig, ax = plt.subplots()
-ax.set_title('daily maximum temperature')
+ax.set_title('daily maximum temperature in C')
 c = ax.pcolormesh(dayofyear, years, np.ma.masked_invalid(temp_max),
                   cmap='viridis',
                   vmin=-10,#np.nanmin(temp_max),
                   vmax=40)#np.nanmax(temp_max))
+ax.set_yticks(np.arange(1980,2020,5))
+ax.set_ylabel('year')
+ax.set_xticks(month_ticks)
+ax.set_xticklabels(month_label)
 c = fig.colorbar(c)
 c.set_label('Celsius')
 fig.show()
 
 ##### rain
+rain = rain[-41:,:]
 fig, ax = plt.subplots()
-ax.set_title('rain')
+ax.set_title('rain in cm')
 c = ax.pcolormesh(dayofyear, years, np.ma.masked_invalid(rain),
                   cmap='viridis',
                   vmin=0.,
-                  vmax=10.)#np.nanmax(rain))
+                  vmax=8.)#np.nanmax(rain))
+ax.set_yticks(np.arange(1995,2020,5))
+ax.set_ylim(1997, 2017)
+ax.set_ylabel('year')
+ax.set_xticks(month_ticks)
+ax.set_xticklabels(month_label)
 c = fig.colorbar(c)
 c.set_label('centimeters')
 fig.show()
-
 '''
+
 ##### snow
+snow = snow[-22:,:]
 fig, ax = plt.subplots()
 ax.set_title('snow')
 c = ax.pcolormesh(dayofyear, years, np.ma.masked_invalid(snow),
                   vmin=0.,
-                  vmax=100.,#np.nanmax(snow))
-                  norm=PowerNorm(gamma=1./2.))#LogNorm())
+                  vmax=np.nanmax(snow))
+                  #norm=PowerNorm(gamma=1./2.))#LogNorm())
 fig.colorbar(c)
 fig.show()
 '''
